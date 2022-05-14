@@ -1,0 +1,33 @@
+name: Skeleton container for R workflows
+on:
+  schedule:
+    - cron: '13 2 21 */2 *'
+      push:
+        branches: [ master ]
+        paths:
+          - Dockerfile
+        workflow_dispatch:
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Build docker image
+          run: docker build -t skeleton .
+
+        - name: Log in to container registry
+          run: "echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin"
+
+        - name: Push image to registry
+          run: |
+            version=$(docker inspect -f '{{range $k, $v := .Config.Env}}{{$v}}{{end}}' skeleton | awk -F '=' '/R_BASE_VERSION/{print $NF}')
+            target=ghcr.io/${{ github.repository_owner }}/skeleton:$version
+            docker tag skeleton $target
+            docker push $target
