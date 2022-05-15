@@ -2,6 +2,10 @@ FROM r-base:latest
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        libcurl4-openssl-dev \
+        libfontconfig1-dev \
+        libssl-dev \
+        libxml2-dev \
         pandoc \
         texlive-luatex \
         texlive-latex-extra \
