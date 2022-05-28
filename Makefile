@@ -1,7 +1,7 @@
 # Makefile template for Rmarkdown projects
 #
-# Includes implicit rules to generate pdf and html versions of Rmd
-# files as well as several commands for development workflows.
+# Includes implicit rules to generate docx, pdf, and html versions of
+# Rmd files as well as several commands for development workflows.
 #
 # Invoke `make help` to get started.
 #
@@ -12,12 +12,13 @@
 # following dependencies:
 #     - entr
 #     - pandoc
-#     - Rmarkdown
+#     - R & Rmarkdown
 ###
 
 SHELL = /bin/bash -eo pipefail
 
 rmd_files  := $(wildcard *.Rmd)
+docx_files := $(rmd_files:%.Rmd=%.docx)
 html_files := $(rmd_files:%.Rmd=%.html)
 tex_files  := $(rmd_files:%.Rmd=%.tex)
 pdf_files  := $(rmd_files:%.Rmd=%.pdf)
@@ -28,7 +29,7 @@ all: $(pdf_files) ## Default rule generates pdf versions of all Rmd files
 ###
 # Development commands as PHONY targets
 clean: ## Clean generated html, tex, and pdf files
-	rm -f $(html_files) $(tex_files) $(pdf_files)
+	rm -f $(docx_files) $(html_files) $(tex_files) $(pdf_files)
 
 help:
 	@printf 'Compile a specific document with `make <file.pdf>.`\n\n'
@@ -46,17 +47,22 @@ watch: ## Auto-rebuild pdf documents (requires the program `entr`)
 	ls *.Rmd | entr -r make -f ./Makefile
 
 wc: $(rmd_files) ## Rough estimate of word count per Rmd file
+	@# Strip code blocks and bibliography before word count
 	@for i in $(rmd_files); do \
 		printf "$$i: "; \
 		sed -e '/^```/,/^```/d' "$$i" | \
+			awk '/---/ { i++ } /---/ && i == 2 { print "suppress-bibliography: true" } 1' | \
 			pandoc --quiet --citeproc -f markdown -t plain | \
 			wc -w; \
 	done
 
 ###
 # Implicit rules for pdf and html generation
-%.pdf: %.Rmd
-	Rscript -e "rmarkdown::render('$<', 'pdf_document', '$@')"
+%.docx: %.Rmd
+	Rscript -e "rmarkdown::render('$<', 'word_document', '$@')"
 
 %.html: %.Rmd
 	Rscript -e "rmarkdown::render('$<', 'html_document', '$@')"
+
+%.pdf: %.Rmd
+	Rscript -e "rmarkdown::render('$<', 'pdf_document', '$@')"
