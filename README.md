@@ -3,7 +3,17 @@ Project Name
 
 Skeleton setup for a `Rmd` based workflow using `GNU Make` as the taskrunner. 
 
-To get started:
+To get started, first setup a new project using a shallow clone.
+
+```sh
+$ git clone --depth 1 git@github.com:jsks/skeleton-project.git <project-directory>
+
+# Change origin to desired remote repository
+$ cd <project-directory>
+$ git remote set-url origin git@github.com:<username>/<project-repo>.git
+```
+
+Next, access the documentation for the default rules in the included Makefile with the `help` target.
 
 ```sh
 $ make help
