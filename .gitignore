@@ -19,6 +19,7 @@ stan/*
 *_cache/
 
 *.RData
+*.rda
 *.rds
 *.dta
 *.sav
