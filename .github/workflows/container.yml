@@ -27,7 +27,9 @@ jobs:
 
       - name: Push image to registry
         run: |
+          ghcr=ghcr.io/${{ github.repository_owner }}/skeleton
+          docker push skeleton ${ghcr}:latest
+
           version=$(docker inspect -f '{{range $k, $v := .Config.Env}}{{$v}}{{end}}' skeleton | awk -F '=' '/R_BASE_VERSION/{print $NF}')
-          target=ghcr.io/${{ github.repository_owner }}/skeleton:$version
-          docker tag skeleton $target
-          docker push $target
+          docker tag skeleton $ghcr:$version
+          docker push $ghcr:$version
