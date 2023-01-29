@@ -32,9 +32,14 @@ clean: ## Clean generated html, tex, and pdf files
 	rm -f $(docx_files) $(html_files) $(tex_files) $(pdf_files)
 
 help:
-	@printf 'Compile a specific document with `make <file.pdf>.`\n\n'
-	@printf 'Additionally, the following commands are available:\n\n'
-	@egrep '^\S+:.*##' $(MAKEFILE_LIST) | \
+	@printf '%b\n' \
+		'Barebones Makefile for compiling Rmarkdown files to docx, html,' \
+		'and pdf outputs.\n' \
+		'Compile a specific document with `make <file.pdf>`. Otherwise,' \
+		'Make defaults to converting all Rmarkdown files in the present' \
+		'directory.\n' \
+		'Additionally, the following commands are available:\n'
+	@grep -E '^\S+:.*##' $(MAKEFILE_LIST) | \
 		sort | \
 		awk -F ':.*##' \
 			'{ printf "\t\033[01;34m%-5s \033[00;37m%s\033[0m\n", $$1, $$2 }'

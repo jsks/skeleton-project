@@ -4,6 +4,7 @@ author:
 date: "`r Sys.Date()`"
 fontsize: 11pt
 linestretch: 1.25
+bibliography: library.bib
 link-citations: true
 mainfont: TeX Gyre Pagella
 mathfont: TeX Gyre Pagella Math
